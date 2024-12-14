@@ -1,5 +1,6 @@
 package com.vegetable.controllers.user;
 
+import java.net.ConnectException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -7,6 +8,8 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import javax.validation.Valid;
+import javax.websocket.server.PathParam;
 
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,17 +19,22 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.vegetable.dao.AccountImpl;
 import com.vegetable.dao.CategoryImpl;
+import com.vegetable.dao.CommentImpl;
 import com.vegetable.dao.OrderDetailImpl;
 import com.vegetable.dao.OrderImpl;
 import com.vegetable.dao.ProductImpl;
+import com.vegetable.entities.Category;
+import com.vegetable.entities.Comment;
 import com.vegetable.entities.Order;
 import com.vegetable.entities.OrderDetail;
 import com.vegetable.entities.Product;
@@ -49,6 +57,8 @@ public class HomeController {
 	OrderDetailImpl orderDetailImpl;
 	@Autowired(required = true)
 	AccountImpl accountImpl;
+	@Autowired(required = true)
+	CommentImpl commentImpl;
 	
 	@RequestMapping(value = {"/", "home"}, method = RequestMethod.GET)
 	public String index(String search, Integer page, Model model, HttpServletRequest request) {
@@ -95,8 +105,9 @@ public class HomeController {
 		model.addAttribute("paginate", productImpl.pagination(page, 9, dataMap));
 		String url = new PaginationHelper().getParamFromUrl(request);
 		model.addAttribute("pageUrl", url);
+		List<Category> listFruit = categoryImpl.getByStatus(0);
 		
-		model.addAttribute("category", categoryImpl.getByStatus(0));
+		model.addAttribute("category", listFruit);
 		model.addAttribute("discount", productImpl.getByStatus(1));
 //		model.addAttribute("fruits", productImpl.getAll());
 		model.addAttribute("page", "fruitsShop");
@@ -140,15 +151,38 @@ public class HomeController {
 			int count = (int) listOrderDetail.stream().count();
 			model.addAttribute("count", count);
 		}
+		List<Comment> comments = commentImpl.getByProductId(id);
+		model.addAttribute("comments", comments);
 		
 		model.addAttribute("category", categoryImpl.getByStatus(0));
 		model.addAttribute("theBest", productImpl.getByType(0, 6));
 		model.addAttribute("theLate", productImpl.getByType(0, 10));
 		model.addAttribute("product",productImpl.getById(id));
+		model.addAttribute("comment", new Comment());
 		
 		model.addAttribute("page", "detail");
 		return "home";
 		
+	}
+	
+	@RequestMapping(value = "postComment/{id}", method = RequestMethod.POST)
+	public String postComment(@PathVariable("id") int proId, @Valid @ModelAttribute("comment") Comment cmt, Model model, RedirectAttributes attributes, HttpServletRequest request) {
+		HttpSession session = request.getSession();
+		Integer userId = (Integer) session.getAttribute("id");
+		if(cmt.getContent().isEmpty()) {
+			attributes.addFlashAttribute("error", "Please fill out this field!");
+			System.out.println("aaaaaaaaaaa");
+			return "redirect:/detail/"+proId;
+		}
+		if(userId != null) {
+			cmt.setUserId(userId);
+			cmt.setProductId(proId);
+			commentImpl.insert(cmt);
+			
+		} else {
+			return "redirect:/login";
+		}
+		return "redirect:/detail/"+proId;
 	}
 	
 	@RequestMapping(value = "addCart/{id}", method = RequestMethod.POST)
@@ -258,7 +292,9 @@ public class HomeController {
 				subTotal += orderDetail.getTotalPrice();
 				
 			}
-			System.out.print(subTotal);
+//			Order orderByUserId = orderImpl.getByUserId(userId);
+			System.out.print("aaaaaaaaaaaaaaaaaaaa"+cart.getId());
+			model.addAttribute("checkout", cart);
 			model.addAttribute("subTotal", subTotal);
 			model.addAttribute("listCart", listOrderDetail);
 		}	
@@ -266,36 +302,61 @@ public class HomeController {
 		model.addAttribute("page", "checkOut");
 		return "home";
 	}
-//	
-//	@RequestMapping(value = "check-out", method = RequestMethod.POST)
-//	public String placeOrder(@ModelAttribute("checkout") Order order, BindingResult result, Model model, HttpServletRequest request) {
-//		System.out.print(order);
-//		HttpSession session = request.getSession();
-//		Integer userId =  (Integer) session.getAttribute("id");
-//			Order cart = orderImpl.getByStatusAndUserId(0, userId);
-//			List<OrderDetail> listOrderDetail = orderDetailImpl.getByOrderId(cart.getId());
-//			float subTotal = 0;
-//				for (OrderDetail orderDetail : listOrderDetail) {
-//					subTotal += orderDetail.getTotalPrice();
-//					
-//				}
-//		if(result.hasErrors()) {
-//			model.addAttribute("subTotal", subTotal);
-//			model.addAttribute("listCart", listOrderDetail);
-//			model.addAttribute("page", "checkOut");
-//			return "home";
-//		}
-//		try {
-//			order.setTotalPrice(subTotal);
-//			orderImpl.update(order);
-//		} catch (Exception e) {
-//			model.addAttribute("subTotal", subTotal);
-//			model.addAttribute("listCart", listOrderDetail);
-//			model.addAttribute("page", "checkOut");
-//			return "home";
-//		}
-//		return "redirect:/home";
-//	}
+
+	@RequestMapping(value = "check-out", method = RequestMethod.POST)
+	public String placeOrder(@Valid @ModelAttribute("checkout") Order order, BindingResult result, Model model, HttpServletRequest request) {
+		System.out.print(order.getName() + order.getId());
+		HttpSession session = request.getSession();
+		Integer userId =  (Integer) session.getAttribute("id");
+		Order cart = orderImpl.getByStatusAndUserId(0, userId);
+		List<OrderDetail> listOrderDetail = orderDetailImpl.getByOrderId(cart.getId());
+		float subTotal = 0;
+			for (OrderDetail orderDetail : listOrderDetail) {
+				subTotal += orderDetail.getTotalPrice();
+				
+			}
+		Boolean error = false;
+		if(order.getName() == "") {
+			model.addAttribute("errorName", "This field cannot be left blank!");
+			error = true;
+		}
+		if(order.getCity() == "") {
+			model.addAttribute("errorCity", "This field cannot be left blank!");
+			error = true;
+		}
+		if(order.getAddress() == "") {
+			model.addAttribute("errorAddress", "This field cannot be left blank!");
+			error = true;
+		}
+		if(order.getPhone() == "") {
+			model.addAttribute("errorPhone", "This field cannot be left blank!");
+			error = true;
+		}
+		if(result.hasErrors() || error) {
+			model.addAttribute("subTotal", subTotal);
+			model.addAttribute("listCart", listOrderDetail);
+			model.addAttribute("page", "checkOut");
+			return "home";
+		}
+		try {
+			System.out.print("cccccccccccccc");
+			order.setTotalPrice(subTotal);
+			order.setStatus(1);
+			orderImpl.update(order);
+			
+			Order cartNew = new Order();
+			cartNew.setStatus(0);
+			cartNew.setUserId(userId); 
+			orderImpl.insert(cartNew);
+		} catch (Exception e) {
+			System.out.print("gggg");
+			model.addAttribute("subTotal", subTotal);
+			model.addAttribute("listCart", listOrderDetail);
+			model.addAttribute("page", "checkOut");
+			return "home";
+		}
+		return "redirect:/home";
+	}
 	
 	@RequestMapping(value = "contact", method = RequestMethod.GET)
 	public String contact(Model model, HttpServletRequest request) {

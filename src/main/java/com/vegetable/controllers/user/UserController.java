@@ -63,7 +63,7 @@ public class UserController {
 	@RequestMapping(value = "login", method = RequestMethod.POST)
 	public String onLogin(String email, String password, Model model, HttpServletRequest request) {
 		Users users = accountImpl.getByEmail(email);
-		if(users == null || !users.getPassword().equals(Cipher.GenerateMD5(password)) || users.getRole() != 0 ) {
+		if(users == null || !users.getPassword().equals(Cipher.GenerateMD5(password)) ) {
 			model.addAttribute("error", "Email or password is invalid!");
 			model.addAttribute("email", email);
 			model.addAttribute("password", password);

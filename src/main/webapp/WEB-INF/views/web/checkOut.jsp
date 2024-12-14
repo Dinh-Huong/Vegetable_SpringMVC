@@ -20,32 +20,48 @@
 <div class="container-fluid py-5">
 	<div class="container py-5">
 		<h1 class="mb-4">Billing details</h1>
-		<form action="" method="post">
+		<f:form action="" method="post" modelAttribute="checkout">
+			<f:hidden path="id"/>
+			<f:hidden path="userId"/>
 			<div class="row g-5">
 				<div class ="col-md-12 col-lg-6 col-xl-7">
 						<div class="form-item w-100">
 							<label class="form-label my-3">Name<sup>*</sup></label> 
-							<input name="name" type="text" class="form-control"/>
+							<f:input path="name" type="text" class="form-control"/>
+							<c:if test="${ !empty errorName }">
+								<span class="text-danger">${ errorName }</span>
+							</c:if>
 						</div>
 						<div class="form-item">
 							<label class="form-label my-3">Company Name<sup>*</sup></label> 
-							<input name="company" type="text" class="form-control"/>
+							<f:input path="company" type="text" class="form-control"/>
 						</div>
 						<div class="form-item">
 							<label class="form-label my-3">Address <sup>*</sup></label> 
-							<input name="address" type="text" class="form-control" placeholder="House Number Street Name"/>
+							<f:input path="address" type="text" class="form-control" placeholder="House Number Street Name"/>
+							<c:if test="${ !empty errorAddress }">
+								<span class="text-danger">${ errorAddress }</span>
+							</c:if>
 						</div>
 						<div class="form-item">
 							<label class="form-label my-3">Town/City<sup>*</sup></label> 
-							<input name="city" type="text" class="form-control"/>
+							<f:input path="city" type="text" class="form-control"/>
+							<c:if test="${ !empty errorCity }">
+								<span class="text-danger">${ errorCity }</span>
+							</c:if>
 						</div>
 						<div class="form-item">
 							<label class="form-label my-3">Mobile<sup>*</sup></label> 
-							<input name="phone" type="tel" class="form-control"/>
+							<f:input path="phone" type="number" class="form-control"/>
+							<f:errors path="phone" cssClass="text-danger"></f:errors>
+							<c:if test="${ !empty errorPhone }">
+								<span class="text-danger">${ errorPhone }</span>
+							</c:if>
 						</div>
 						<div class="form-item">
 							<label class="form-label my-3">Email Address<sup>*</sup></label> 
-							<input name="email" type="email" class="form-control"/>
+							<f:input path="email" type="email" class="form-control"/>
+							<f:errors path="email" cssClass="text-danger"></f:errors>
 						</div>
 						<div class="form-item">
 							<label class="form-label my-3">Note</label> 
@@ -198,7 +214,7 @@
 					</div>
 				</div>
 			</div>
-		</form>
+		</f:form>
 	</div>
 </div>
 <!-- Checkout Page End -->

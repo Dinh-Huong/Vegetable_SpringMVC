@@ -19,13 +19,11 @@ function hanldeQuantity (button, id) {
 	    totalPriceElem.innerHTML = total+"$";
 	    
 		var oldSubTotal = subTotal.innerHTML; 
-		
 	    if(button.classList.contains("btn-plus")) {
 		     subTotal.innerHTML = (parseFloat(oldSubTotal) + parseFloat(valuePrice)) + "$";
 		} else if( parseFloat(inputQuantity.value) > 1) {
 		     subTotal.innerHTML = (parseFloat(oldSubTotal) - parseFloat(valuePrice)) + "$";
 		}
-		
 		
 	    
 	    fetch('http://localhost:8080/Vegetable/update/order-detail/'+id+"/"+newVal)

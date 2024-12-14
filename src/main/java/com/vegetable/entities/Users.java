@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -29,7 +30,7 @@ public class Users {
 	@OneToMany(mappedBy = "users", cascade = CascadeType.ALL)
 	private List<Comment> comments;
 	
-	@OneToMany(mappedBy = "users", cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
 	private List<Order> orders;
 	
 	public Users() {
@@ -38,15 +39,14 @@ public class Users {
 	}
 
 	public Users(int id, @NotEmpty(message = "This field cannot be left blank!") String name, int role,
-			@NotEmpty(message = "This field cannot be left blank!") @Pattern(regexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$", message = "Please provide a valid email address") String email,
-			@NotEmpty(message = "This field cannot be left blank!") String password, List<Comment> comments) {
+			@Pattern(regexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$", message = "Please provide a valid email address") String email,
+			@NotEmpty(message = "This field cannot be left blank!") String password) {
 		super();
 		this.id = id;
 		this.name = name;
 		this.role = role;
 		this.email = email;
 		this.password = password;
-		this.comments = comments;
 	}
 
 	public int getId() {
@@ -89,12 +89,5 @@ public class Users {
 		this.password = password;
 	}
 
-	public List<Comment> getComments() {
-		return comments;
-	}
-
-	public void setComments(List<Comment> comments) {
-		this.comments = comments;
-	}
 	
 }

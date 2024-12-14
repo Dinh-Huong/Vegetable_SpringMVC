@@ -3,6 +3,8 @@ package com.vegetable.dao;
 import java.util.List;
 import java.util.Map;
 
+import javax.persistence.Query;
+
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +24,17 @@ public class CommentImpl implements IDao<Comment>{
 		session.beginTransaction();
 		List<Comment> data = session.createQuery("from Comment order by id desc").getResultList();
 		session.getTransaction().commit();
+		session.close();
+		return data;
+	}
+	public List<Comment> getByProductId(int id) {
+		Session session = sessionFactory.openSession();
+		session.beginTransaction();
+		Query query = session.createQuery("from Comment where productId = :proId");
+		query.setParameter("proId", id);
+		List<Comment> data = query.getResultList();
+		session.getTransaction().commit();
+		session.close();
 		return data;
 	}
 
@@ -49,6 +62,7 @@ public class CommentImpl implements IDao<Comment>{
 		session.beginTransaction();
 		Comment comment = session.get(Comment.class, id);
 		session.getTransaction().commit();
+		session.close();
 		return comment;
 	}
 
@@ -64,7 +78,7 @@ public class CommentImpl implements IDao<Comment>{
 		session.beginTransaction();
 		session.save(e);
 		session.getTransaction().commit();
-		
+		session.close();
 	}
 
 	@Override
@@ -73,7 +87,7 @@ public class CommentImpl implements IDao<Comment>{
 		session.beginTransaction();
 		session.update(e);
 		session.getTransaction().commit();
-		
+		session.close();
 	}
 
 	@Override
@@ -83,7 +97,7 @@ public class CommentImpl implements IDao<Comment>{
 		Comment comment = session.get(Comment.class, id);
 		session.delete(comment);
 		session.getTransaction().commit();
-		
+		session.close();
 	}
 
 }

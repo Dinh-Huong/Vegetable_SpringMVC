@@ -23,7 +23,7 @@ public class OrderImpl implements IDao<Order>{
 	public List<Order> getAll() {
 		Session session = sessionFactory.openSession();
 		session.beginTransaction();
-		List<Order> data = session.createQuery("from Order order by desc").getResultList();
+		List<Order> data = session.createQuery("from Order order by createdAt desc").getResultList();
 		session.getTransaction().commit();;
 		session.close();
 		return data;
@@ -83,6 +83,17 @@ public class OrderImpl implements IDao<Order>{
 		session.close();
 		return order;
 	}
+	
+	public Order getByUserId(int userId) {
+		Session session = sessionFactory.openSession();
+		session.beginTransaction();
+		Query query = session.createQuery("from Order where userId= : userId");
+		query.setParameter("userId", userId);
+		Order order = (Order) query.getSingleResult();
+		session.getTransaction().commit();
+		session.close();
+		return order;
+	}
  
 	
 	public Order getByStatusAndUserId(int status, Integer userId) {
@@ -102,11 +113,12 @@ public class OrderImpl implements IDao<Order>{
 	public Pagination<Order> pagination(int page, int size, Map<String, String> dataMap) {
 		Session session = sessionFactory.openSession();
 		session.beginTransaction();
-		String sql = "from Order";
+		String sql = "from Order where status <> 0";
 		
 		if(dataMap.containsKey("q")) {
-			sql += " where name like " + "'%"+ dataMap.get("q") + "%'"; 
+			sql += " and name like " + "'%"+ dataMap.get("q") + "%'"; 
 		}
+		System.out.print(sql);
 		Query query = session.createQuery(sql);
 		int totalPage = (int) Math.ceil((double)query.getResultList().size()/size);
 		List<Order> data = query.setFirstResult((page-1)*size).setMaxResults(size).getResultList();

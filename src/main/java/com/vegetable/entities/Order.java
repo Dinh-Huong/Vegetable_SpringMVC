@@ -43,9 +43,9 @@ public class Order {
 	@DateTimeFormat(pattern="dd/MM/yyyy")
 	private Date createdAt = new Date();
 	
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "userId", insertable = false, updatable = false)
-	private Users users;
+	private Users user;
 	
 	@OneToMany(mappedBy = "orders", cascade = CascadeType.ALL)
 	private List<OrderDetail> orderDetails;
@@ -55,13 +55,9 @@ public class Order {
 		// TODO Auto-generated constructor stub
 	}
 
-
-	public Order(int id, @NotEmpty(message = "Please fill out this field!") String name,
-			@NotEmpty(message = "Please fill out this field!") String slug, String company,
-			@NotEmpty(message = "Please fill out this field!") String city,
-			@NotEmpty(message = "Please fill out this field!") String address,
-			@NotEmpty(message = "Please fill out this field!") @Pattern(regexp = "\\d{10}", message = "you must enter 10 numbers") String phone,
-			@Pattern(regexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$", message = "Please provide a valid email address") @NotEmpty(message = "Please fill out this field!") String email,
+	public Order(int id, String name, String slug, String company, String city, String address,
+			@Pattern(regexp = "\\d{10}", message = "you must enter 10 numbers") String phone,
+			@Pattern(regexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$", message = "Please provide a valid email address") String email,
 			int status, String note, Float totalPrice, int userId, Date createdAt) {
 		super();
 		this.id = id;
@@ -79,135 +75,129 @@ public class Order {
 		this.createdAt = createdAt;
 	}
 
-
 	public int getId() {
 		return id;
 	}
-
 
 	public void setId(int id) {
 		this.id = id;
 	}
 
-
 	public String getName() {
 		return name;
 	}
-
 
 	public void setName(String name) {
 		this.name = name;
 	}
 
-
 	public String getSlug() {
 		return slug;
 	}
-
 
 	public void setSlug(String slug) {
 		this.slug = slug;
 	}
 
-
 	public String getCompany() {
 		return company;
 	}
-
 
 	public void setCompany(String company) {
 		this.company = company;
 	}
 
-
 	public String getCity() {
 		return city;
 	}
-
 
 	public void setCity(String city) {
 		this.city = city;
 	}
 
-
 	public String getAddress() {
 		return address;
 	}
-
 
 	public void setAddress(String address) {
 		this.address = address;
 	}
 
-
 	public String getPhone() {
 		return phone;
 	}
-
 
 	public void setPhone(String phone) {
 		this.phone = phone;
 	}
 
-
 	public String getEmail() {
 		return email;
 	}
-
 
 	public void setEmail(String email) {
 		this.email = email;
 	}
 
-
 	public int getStatus() {
 		return status;
 	}
-
 
 	public void setStatus(int status) {
 		this.status = status;
 	}
 
-
 	public String getNote() {
 		return note;
 	}
-
 
 	public void setNote(String note) {
 		this.note = note;
 	}
 
-
 	public Float getTotalPrice() {
 		return totalPrice;
 	}
-
 
 	public void setTotalPrice(Float totalPrice) {
 		this.totalPrice = totalPrice;
 	}
 
-
 	public int getUserId() {
 		return userId;
 	}
-
 
 	public void setUserId(int userId) {
 		this.userId = userId;
 	}
 
-
 	public Date getCreatedAt() {
 		return createdAt;
 	}
 
-
 	public void setCreatedAt(Date createdAt) {
 		this.createdAt = createdAt;
+	
 	}
+
+	public Users getUser() {
+		return user;
+	}
+
+	public void setUser(Users user) {
+		this.user = user;
+	}
+
+	public List<OrderDetail> getOrderDetails() {
+		return orderDetails;
+	}
+
+	public void setOrderDetails(List<OrderDetail> orderDetails) {
+		this.orderDetails = orderDetails;
+	}
+
+	
+
 
 
 	

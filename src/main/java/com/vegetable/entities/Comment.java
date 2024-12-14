@@ -24,7 +24,6 @@ public class Comment {
 	private Integer id;
 	private Integer productId;
 	private Integer userId;
-	@NotEmpty(message = "Please fill out this field!")
 	private String content;
 	@Temporal(TemporalType.DATE)
 	@DateTimeFormat(pattern = "dd/MM/yyyy")
@@ -34,7 +33,7 @@ public class Comment {
 	@JoinColumn(name = "productId", insertable = false, updatable = false)
 	private Product product;
 	
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "userId", insertable = false, updatable = false)
 	private Users users;
 	
@@ -45,8 +44,7 @@ public class Comment {
 	}
 
 
-	public Comment(Integer id, Integer productId, Integer userId,
-			@NotEmpty(message = "Please fill out this field!") String content, Date createdAt, Product product,
+	public Comment(Integer id, Integer productId, Integer userId, String content, Date createdAt, Product product,
 			Users users) {
 		super();
 		this.id = id;

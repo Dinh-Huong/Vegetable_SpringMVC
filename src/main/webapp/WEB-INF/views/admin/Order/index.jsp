@@ -42,9 +42,9 @@
 							<th class="col-2">Name</th>
 							<th class="col-2">Phone</th>
 							<th class="col-2">Address</th>
-							<th class="col-1">Price</th>
+							<th class="col-2">Price</th>
 							<th class="col-2">Status</th>
-							<th class="col-2">Action</th>
+							<th class="col-1">Action</th>
 						</tr>
 					</thead>
 
@@ -52,52 +52,70 @@
 						<c:forEach items="${ paginate.data }" var="order" varStatus="loop">
 							<tr>
 								<td>${loop.count}</td>
-								<td>${ order.users.name }</td>
+								<td>${ order.user.name }</td>
 								<td>${ order.phone }</td>
 								<td>${ order.address }</td>
 								<td>${ order.totalPrice }</td>
-								<td>${ order.status }</td>
-								<td class="d-flex">
-									 <button type="button" class="btn btn-primary" data-toggle="modal" data-target=".${ order.id }bd-example-modal-sm">Sửa</button>
-                                        <div class="modal fade ${ order.id }bd-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
-                                            <div class="modal-dialog modal-sm">
-                                              <div class="modal-content">
-                                                <form action="" method="post" class="p-3">
+								<td>${ order.status == 1 ? "Preparing" : order.status == 2 ? "Delivering" :order.status == 3 ? "Complete" : "Cancel" }</td>
+								<td class="d-flex">	
+									<!-- Button trigger modal -->
+									<button type="button" class="btn btn-primary"
+										data-toggle="modal" data-target="#exampleModalCenter${ order.id }">
+										Edit</button> <!-- Modal -->
+									<div class="modal fade" id="exampleModalCenter${ order.id }" tabindex="-1"
+										role="dialog" aria-labelledby="exampleModalCenterTitle"
+										aria-hidden="true">
+										<div class="modal-dialog modal-dialog-centered"
+											role="document">
+											<div class="modal-content">
+												<div class="modal-header">
+													<h5 class="modal-title" id="exampleModalLongTitle">Status</h5>
+													<button type="button" class="close" data-dismiss="modal"
+														aria-label="Close">
+														<span aria-hidden="true">&times;</span>
+													</button>
+												</div>
+												<div class="modal-body">
+													<form action="change/${ order.id }" method="post" class="p-3">
+														<div class="d-flex flex-column align-items-start">
+														<div class="form-check">
+															<input type="radio" name='status' id="status-1" value="1" class="form-check-input d-inline mr-2" 
+															${ order.status  == 1 ? 'checked' : ''} > <label for="status-1"
+																class="d-inline-block">Preparing</label>
+														</div>
+														<div class="form-check">
+															<input type="radio" name='status' id="status-2" value="2"
+																class="form-check-input d-inline mr-2" ${ order.status  == 2 ?
+															'checked' : ''}> <label for="status-2"
+																class="d-inline-block">Delivering</label>
+														</div>
+														<div class="form-check">
+															<input type="radio" name='status' id="status-3" value="3"
+																class="form-check-input d-inline mr-2" ${ order.status  == 3 ?
+															'checked' : ''}> <label for="status-3"
+																class="d-inline-block">Complete</label>
+														</div>
 
-                                                    <h3 class="text-center">Trạng thái</h3>
-                                                    <div class="form-group">
-                                                        <div>
-                                                            <input type="radio" name='status' id="status-0" value="0" class="d-inline mr-2" {{ $item->status == 0 ? 'checked' : '' }}>
-                                                            <label for="status-0" class="d-inline-block">Đang chuẩn bị</label>
-                                                        </div>
-
-                                                        <div>
-                                                            <input type="radio" name='status' id="status-1" value="1" class="d-inline mr-2" {{ $item->status == 1 ? 'checked' : '' }}>
-                                                            <label for="status-1" class="d-inline-block">Vận chuyển</label>
-                                                        </div>
-                                                        <div>
-                                                            <input type="radio" name='status' id="status-2" value="2" class="d-inline mr-2" {{ $item->status == 2 ? 'checked' : '' }}>
-                                                            <label for="status-2" class="d-inline-block">Giao hàng</label>
-                                                        </div>
-
-                                                        <div>
-                                                            <input type="radio" name='status' id="status-3" value="3" class="d-inline mr-2" {{ $item->status == 3 ? 'checked' : '' }}>
-                                                            <label for="status-3" class="d-inline-block">Hoàn thành</label>
-                                                        </div>
-                                                        <div>
-                                                            <input type="radio" name='status' id="status-4" value="4" class="d-inline mr-2" {{ $item->status == 4 ? 'checked' : '' }}>
-                                                            <label for="status-4" class="d-inline-block">Đã hủy</label>
-                                                        </div>
-                                                        <div>
-                                                            <input type="radio" name='status' id="status-5" value="5" class="d-inline mr-2" {{ $item->status == 5 ? 'checked' : '' }}>
-                                                            <label for="status-5" class="d-inline-block">Trả hàng</label>
-                                                        </div>
-                                                    </div>
-                                                    <button type="submit" class="btn btn-dark">Lưu</button>
-                                                </form>
-                                              </div>
-                                            </div>
-                                          </div>
+														<div class="form-check">
+															<input type="radio" name='status' id="status-4" value="4"
+																class="form-check-input d-inline mr-2" ${ order.status  == 4 ?
+															'checked' : ''}> <label for="status-4"
+																class="d-inline-block">Cancel</label>
+														</div>
+														</div>
+														
+														<div class="modal-footer">
+															<button type="button" class="btn btn-secondary"
+																data-dismiss="modal">Close</button>
+															<button type="submit" class="btn btn-primary">Save
+																changes</button>
+														</div>
+														
+													</form>
+												</div>
+											</div>
+										</div>
+									</div>
 								</td>
 							</tr>
 

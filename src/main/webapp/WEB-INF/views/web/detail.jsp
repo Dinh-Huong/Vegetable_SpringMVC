@@ -3,7 +3,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <c:set var="contextPath"
 	value="${ pageContext.servletContext.contextPath }" scope="session" />
-
+<%@ taglib prefix="f" uri="http://www.springframework.org/tags/form" %>
 
 <!-- Single Page Header start -->
 <div class="container-fluid page-header py-5">
@@ -81,100 +81,30 @@
 							<div class="tab-pane active" id="nav-about" role="tabpanel"
 								aria-labelledby="nav-about-tab">
 								<p>${ product.description }</p>
-								<!-- <div class="px-2">
-									<div class="row g-4">
-										<div class="col-6">
-											<div
-												class="row bg-light align-items-center text-center justify-content-center py-2">
-												<div class="col-6">
-													<p class="mb-0">Weight</p>
-												</div>
-												<div class="col-6">
-													<p class="mb-0">1 kg</p>
-												</div>
-											</div>
-											<div
-												class="row text-center align-items-center justify-content-center py-2">
-												<div class="col-6">
-													<p class="mb-0">Country of Origin</p>
-												</div>
-												<div class="col-6">
-													<p class="mb-0">Agro Farm</p>
-												</div>
-											</div>
-											<div
-												class="row bg-light text-center align-items-center justify-content-center py-2">
-												<div class="col-6">
-													<p class="mb-0">Quality</p>
-												</div>
-												<div class="col-6">
-													<p class="mb-0">Organic</p>
-												</div>
-											</div>
-											<div
-												class="row text-center align-items-center justify-content-center py-2">
-												<div class="col-6">
-													<p class="mb-0">Сheck</p>
-												</div>
-												<div class="col-6">
-													<p class="mb-0">Healthy</p>
-												</div>
-											</div>
-											<div
-												class="row bg-light text-center align-items-center justify-content-center py-2">
-												<div class="col-6">
-													<p class="mb-0">Min Weight</p>
-												</div>
-												<div class="col-6">
-													<p class="mb-0">250 Kg</p>
-												</div>
-											</div>
-										</div>
-									</div>
-								</div> -->
 							</div>
 							<div class="tab-pane" id="nav-mission" role="tabpanel"
 								aria-labelledby="nav-mission-tab">
-								<div class="d-flex">
-									<img src="img/avatar.jpg" class="img-fluid rounded-circle p-3"
-										style="width: 100px; height: 100px;" alt="">
-									<div class="">
-										<p class="mb-2" style="font-size: 14px;">April 12, 2024</p>
-										<div class="d-flex justify-content-between">
-											<h5>Jason Smith</h5>
-											<div class="d-flex mb-3">
-												<i class="fa fa-star text-secondary"></i> <i
-													class="fa fa-star text-secondary"></i> <i
-													class="fa fa-star text-secondary"></i> <i
-													class="fa fa-star text-secondary"></i> <i
-													class="fa fa-star"></i>
+								<c:forEach items="${ comments }" var="cmt">
+									<div class="d-flex">
+										<img src="${ contextPath }/user/img/avatar.jpg" class="img-fluid rounded-circle p-3"
+											style="width: 100px; height: 100px;" alt="">
+										<div class="">
+											<p class="mb-2" style="font-size: 14px;"> ${ cmt.createdAt } </p>
+											<div class="d-flex justify-content-between">
+												<h5>${ cmt.users.name }</h5>
+												<div class="d-flex mb-3">
+													<i class="fa fa-star text-secondary"></i> <i
+														class="fa fa-star text-secondary"></i> <i
+														class="fa fa-star text-secondary"></i> <i
+														class="fa fa-star text-secondary"></i> <i
+														class="fa fa-star"></i>
+												</div>
 											</div>
+											<p>${ cmt.content }</p>
 										</div>
-										<p>The generated Lorem Ipsum is therefore always free from
-											repetition injected humour, or non-characteristic words etc.
-											Susp endisse ultricies nisi vel quam suscipit</p>
 									</div>
-								</div>
-								<div class="d-flex">
-									<img src="img/avatar.jpg" class="img-fluid rounded-circle p-3"
-										style="width: 100px; height: 100px;" alt="">
-									<div class="">
-										<p class="mb-2" style="font-size: 14px;">April 12, 2024</p>
-										<div class="d-flex justify-content-between">
-											<h5>Sam Peters</h5>
-											<div class="d-flex mb-3">
-												<i class="fa fa-star text-secondary"></i> <i
-													class="fa fa-star text-secondary"></i> <i
-													class="fa fa-star text-secondary"></i> <i
-													class="fa fa-star"></i> <i class="fa fa-star"></i>
-											</div>
-										</div>
-										<p class="text-dark">The generated Lorem Ipsum is
-											therefore always free from repetition injected humour, or
-											non-characteristic words etc. Susp endisse ultricies nisi vel
-											quam suscipit</p>
-									</div>
-								</div>
+								</c:forEach>
+								
 							</div>
 							<div class="tab-pane" id="nav-vision" role="tabpanel">
 								<p class="text-dark">Tempor erat elitr rebum at clita. Diam
@@ -185,9 +115,9 @@
 							</div>
 						</div>
 					</div>
-					<form action="#">
+					<f:form action="${ contextPath }/postComment/${ product.id } " method="post" modelAttribute="comment">
 						<h4 class="mb-5 fw-bold">Leave a Reply</h4>
-						<div class="row g-4">
+						<!-- <div class="row g-4">
 							<div class="col-lg-6">
 								<div class="border-bottom rounded">
 									<input type="text" class="form-control border-0 me-4"
@@ -199,12 +129,15 @@
 									<input type="email" class="form-control border-0"
 										placeholder="Your Email *">
 								</div>
-							</div>
+							</div> -->
 							<div class="col-lg-12">
 								<div class="border-bottom rounded my-4">
-									<textarea name="" id="" class="form-control border-0" cols="30"
-										rows="8" placeholder="Your Review *" spellcheck="false"></textarea>
+										<f:textarea path="content" placeholder="Your Review *" class="form-control border-0" cols="30"
+										rows="8" spellcheck="false"/>
 								</div>
+								<span class="text-danger"> ${ error } </span>
+								<f:errors path="content" cssClass="error text-danger"></f:errors>
+								
 							</div>
 							<div class="col-lg-12">
 								<div class="d-flex justify-content-between py-3 mb-5">
@@ -217,78 +150,78 @@
 												class="fa fa-star"></i>
 										</div>
 									</div>
-									<a href="#"
+									<button type="submit"
 										class="btn border border-secondary text-primary rounded-pill px-4 py-3">
-										Post Comment</a>
+										Post Comment</button>
 								</div>
 							</div>
 						</div>
-					</form>
+					</f:form>
 				</div>
-			</div>
-			<div class="col-lg-4 col-xl-3">
-				<div class="row g-4 fruite">
-					<div class="col-lg-12">
-					<!-- 	<div class="input-group w-100 mx-auto d-flex mb-4">
-							<input type="search" class="form-control p-3"
-								placeholder="keywords" aria-describedby="search-icon-1">
-							<span id="search-icon-1" class="input-group-text p-3"><i
-								class="fa fa-search"></i></span>
-						</div> -->
-						<div class="mb-4">
-							<h4>Categories</h4>
-							<ul class="list-unstyled fruite-categorie">
-								<c:forEach items="${ category }" var="cate">
-									<li>
-										<div class="d-flex justify-content-between fruite-name">
-											<a href="/Vegetable/fruits?cate=${ cate.id }"><i class="fas fa-apple-alt me-2"></i>${ cate.name }</a> <span>(3)</span>
-										</div>
-									</li>
-								</c:forEach>
-							</ul>
-						</div>
-					</div>
-					<div class="col-lg-12">
-						<h4 class="mb-4">Featured products</h4>
-						<c:forEach items="${ theBest }" var="best">
-						<a href="${ contextPath }/detail/${best.id}">
-							<div class="d-flex align-items-center justify-content-start">
-								<div class="rounded" style="width: 100px; height: 100px;">
-									<img src="${ contextPath }/${ best.thumbnail }" class="img-fluid rounded"
-										alt="Image">
-								</div>
-								<div class="ml-3">
-									<h6 class="mb-2">${ best.name }</h6>
-									<div class="d-flex mb-2">
-										<i class="fa fa-star text-secondary"></i> <i
-											class="fa fa-star text-secondary"></i> <i
-											class="fa fa-star text-secondary"></i> <i
-											class="fa fa-star text-secondary"></i> <i class="fa fa-star"></i>
-									</div>
-									<div class="d-flex mb-2">
-										<h5 class="fw-bold me-2"> ${ best.price } $</h5>
-										<!-- <h5 class="text-danger text-decoration-line-through">4.11
-											$</h5> -->
-									</div>
-								</div>
+				<div class="col-lg-4 col-xl-3">
+					<div class="row g-4 fruite">
+						<div class="col-lg-12">
+						<!-- 	<div class="input-group w-100 mx-auto d-flex mb-4">
+								<input type="search" class="form-control p-3"
+									placeholder="keywords" aria-describedby="search-icon-1">
+								<span id="search-icon-1" class="input-group-text p-3"><i
+									class="fa fa-search"></i></span>
+							</div> -->
+							<div class="mb-4">
+								<h4>Categories</h4>
+								<ul class="list-unstyled fruite-categorie">
+									<c:forEach items="${ category }" var="cate">
+										<li>
+											<div class="d-flex justify-content-between fruite-name">
+												<a href="/Vegetable/fruits?cate=${ cate.id }"><i class="fas fa-apple-alt me-2"></i>${ cate.name }</a> <span>(3)</span>
+											</div>
+										</li>
+									</c:forEach>
+								</ul>
 							</div>
-						</a>
-						</c:forEach>
-						<div class="d-flex justify-content-center my-4">
-							<a href="#"
-								class="btn border border-secondary px-4 py-3 rounded-pill text-primary w-100">Vew
-								More</a>
 						</div>
-					</div>
-					<div class="col-lg-12">
-						<div class="position-relative">
-							<img src="img/banner-fruits.jpg" class="img-fluid w-100 rounded"
-								alt="">
-							<div class="position-absolute"
-								style="top: 50%; right: 10px; transform: translateY(-50%);">
-								<h3 class="text-secondary fw-bold">
-									Fresh <br> Fruits <br> Banner
-								</h3>
+						<div class="col-lg-12">
+							<h4 class="mb-4">Featured products</h4>
+							<c:forEach items="${ theBest }" var="best">
+							<a href="${ contextPath }/detail/${best.id}">
+								<div class="d-flex align-items-center justify-content-start">
+									<div class="rounded" style="width: 100px; height: 100px;">
+										<img src="${ contextPath }/${ best.thumbnail }" class="img-fluid rounded"
+											alt="Image">
+									</div>
+									<div class="ml-3">
+										<h6 class="mb-2">${ best.name }</h6>
+										<div class="d-flex mb-2">
+											<i class="fa fa-star text-secondary"></i> <i
+												class="fa fa-star text-secondary"></i> <i
+												class="fa fa-star text-secondary"></i> <i
+												class="fa fa-star text-secondary"></i> <i class="fa fa-star"></i>
+										</div>
+										<div class="d-flex mb-2">
+											<h5 class="fw-bold me-2"> ${ best.price } $</h5>
+											<!-- <h5 class="text-danger text-decoration-line-through">4.11
+												$</h5> -->
+										</div>
+									</div>
+								</div>
+							</a>
+							</c:forEach>
+							<div class="d-flex justify-content-center my-4">
+								<a href="#"
+									class="btn border border-secondary px-4 py-3 rounded-pill text-primary w-100">Vew
+									More</a>
+							</div>
+						</div>
+						<div class="col-lg-12">
+							<div class="position-relative">
+								<img src="img/banner-fruits.jpg" class="img-fluid w-100 rounded"
+									alt="">
+								<div class="position-absolute"
+									style="top: 50%; right: 10px; transform: translateY(-50%);">
+									<h3 class="text-secondary fw-bold">
+										Fresh <br> Fruits <br> Banner
+									</h3>
+								</div>
 							</div>
 						</div>
 					</div>
